@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8">
+	<title>Volcanoes: largest VEI's</title>
+	<script src="d3.min.js"></script>
+	<link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
+	<style>
+		html * {
+			font-family: 'Fira Sans' !important;
+		}
+		path {
+			stroke: white;
+			stroke-width: 0.5px;
+			fill: lightgrey;
+		}
+		.circle {
+			stroke: red;
+			stroke-width: 1px;
+			fill: orange;
+			fill-opacity: 0.5;
+		}
+		div.tooltip {	
+		    position: absolute;			
+		    text-align: left;			
+		    width: 80px;					
+		    height: 28px;					
+		    padding: 2px;				
+		    font: 12px sans-serif;		
+		    background: black;
+			color: white;	
+		    border: 0px;			
+		    pointer-events: none;			
+		}
+	</style>
+</head>
+<body>
+	<h1>Volcanoes!</h1>
+	<p>Largest VEI of Holocene (11700 years ago or more recent) eruptions</p>
+	<script>
+		var width = 950;
+		var height = 460;
+
+		var svg = d3.select("body")
+			.append("svg")
+			.attr("width",width)
+			.attr("height",height);
+
+		var projection = d3.geoEquirectangular()
+			.center([0, 20])
+			//.scale(width / 2 / Math.PI)
+			.scale(150)
+			.rotate([-100,0]);
+
+		var path = d3.geoPath()
+			.projection(projection);
+
+		// load and display the World
+		d3.json("world-110m.geojson", function(err, geojson) {
+			svg.append("path")
+				.attr("d", path(geojson))
+		});
+		
+		var div = d3.select("body").append("div")	
+		    .attr("class", "tooltip")				
+		    .style("opacity", 0);
+		
+		d3.json("01.json", function(err, volc) {
+			var vei = [1,2,3,5,8,13,21,34,55];
+			var color = [];
+			
+			volc.sort(function(x,y) {
+				return d3.descending(x.largestVei,y.largestVei);
+			});
+			
+			svg.selectAll("circle")
+				.data(volc)
+				.enter().append("circle")
+					.attr("class", "circle")
+					.attr("cx", function(d) {return projection([d.longitude,d.latitude])[0];})
+					.attr("cy", function(d) {return projection([d.longitude,d.latitude])[1];})
+					.attr("r", function (d) {return vei[d.largestVei];})
+					.on("mouseover", function(d) {		
+						div.transition()		
+						    .duration(200)		
+						    .style("opacity", .9);		
+						div.html(d.name)	
+						    .style("left", (d3.event.pageX) + "px")		
+						    .style("top", (d3.event.pageY - 14) + "px");	
+					})					
+					.on("mouseout", function(d) {		
+						div.transition()		
+						    .duration(500)		
+						    .style("opacity", 0);	
+					});
+			/*
+			var circumference = 6371000 * Math.PI * 2;
+					
+			var angle1 = 1000000 / circumference * 360;
+			var missile1 = d3.geoCircle().center([125.6720717,39.0292506]).radius(angle1);
+
+			svg.append("path")
+				.attr("d", path(missile1()))
+				.attr("class","circle")
+
+			var angle2 = 3500000 / circumference * 360;
+			var missile2 = d3.geoCircle().center([125.6720717,39.0292506]).radius(angle2);
+
+			svg.append("path")
+				.attr("d", path(missile2()))
+				.attr("class","circle")*/
+		});
+
+	</script>
+</body>
