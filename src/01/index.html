@@ -53,10 +53,13 @@
 
 		var path = d3.geoPath()
 			.projection(projection);
+		
+		var l1 = svg.append('g');
+		var l2 = svg.append('g');
 
 		// load and display the World
 		d3.json("world-110m.geojson", function(err, geojson) {
-			svg.append("path")
+			l1.append("path")
 				.attr("d", path(geojson))
 		});
 		
@@ -72,7 +75,7 @@
 				return d3.descending(x.largestVei,y.largestVei);
 			});
 			
-			svg.selectAll("circle")
+			l2.selectAll("circle")
 				.data(volc)
 				.enter().append("circle")
 					.attr("class", "circle")
