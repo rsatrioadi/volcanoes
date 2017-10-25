@@ -11,6 +11,7 @@ const main = () => {
 	fetchData()
 		.then((data) => {
 			data = scaleNumbers(data)
+			data = sortData(data)
 			drawLetusan(data)
 		})
 		.catch((err) => {
@@ -76,8 +77,24 @@ const scaleNumbers = (source) => {
 	return result
 }
 
+const sortData = (source) => {
+	sortby = $("#DdlSort").val()
+	result = []
+
+	result = source.sort(function (a, b) {
+		aint = parseInt(a[sortby], 10)
+		bint = parseInt(b[sortby], 10)
+	    return bint - aint
+	})
+
+	return result
+}
+
 const drawLetusan = (data) => {
-	data.forEach((letusan) => {
+	$('#root').empty()
+	//data.forEach((letusan) => {
+	for (var ii = 0; ii < 20; ii++) {
+		var letusan = data[ii]
 		const { ele, vei, pop } = letusan
 		const nama = letusan['NAME']
 		const year = letusan['LARGEST YEAR']
@@ -88,7 +105,7 @@ const drawLetusan = (data) => {
 				.append(
 					$(`
 						<p class="label">
-							<b>${nama}</b> ${year}
+							<b>${nama}</b> ${year}</br>
 						</p>
 					`)
 				)
@@ -124,7 +141,7 @@ const drawLetusan = (data) => {
 		}
 
 		$('#root').append($letusan)
-	})
+	}
 }
 
 main()

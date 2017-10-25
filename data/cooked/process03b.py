@@ -3,7 +3,7 @@ import json
 
 vl = []
 
-with open('03c.csv') as vfile:
+with open('03v2.csv') as vfile:
     vf = list(csv.DictReader(vfile))
     for v in vf:
         vl += [v]
