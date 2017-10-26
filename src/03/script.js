@@ -12,8 +12,17 @@ const main = () => {
 
       // data to chartjs format
       //data.forEach((gunung) => {
-	for (var ii = 14; ii >= 0; ii--) {
-		var gunung = data[ii]
+	const indices = []
+	  for (var i=0; i<10; i++) {
+		  indices[i] = data.length-i-1;
+	  }
+	  for (var i=0; i<10; i++) {
+		  indices[i+10] = 10-i-1;
+	  }
+	  console.log(data.length)
+	for (var i=0; i<20; i++) {
+		console.log(indices[i])
+		var gunung = data[indices[i]]
         const idx = names.push(gunung['name']+' ('+gunung['elevation']+'m)') - 1
         gunung.eruptions.forEach((eruption) => {
           const start = parseInt(eruption['START'], 10)

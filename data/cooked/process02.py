@@ -25,7 +25,7 @@ with open('gvp_volcanoes.csv') as vfile:
                         if e['VEI'] >= largest['VEI']:
                             largest = e
                         ee += [e]    
-                if ec > 50:
+                if ec > 0:
                     vo = { \
                             'name':v['NAME'], 'country':v['COUNTRY'], \
                             'latitude':v['LATITUDE'], 'longitude':v['LONGITUDE'], 'elevation':v['ELEVATION'], \
