@@ -2,7 +2,7 @@ const Config = {
 	eleMinHeight: 30,
 	eleMaxHeight: 300,
 	veiMinWidth: 30,
-	veiMaxWidth: 300,
+	veiMaxWidth: 400,
 	popMinCount: 1,
 	popMaxCount: 20,
 }

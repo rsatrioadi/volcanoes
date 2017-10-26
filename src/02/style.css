@@ -1,5 +1,6 @@
 html * {
 	font-family: 'Fira Sans', sans-serif !important;
+	text-align:center;
 }
 
 #root:after {
