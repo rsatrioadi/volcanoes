@@ -63,3 +63,7 @@ html * {
 	height: 20px;
 	margin: 2px;
 }
+.house img {
+	max-width: 100%;
+	max-height: 100%;
+}
