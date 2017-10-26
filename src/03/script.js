@@ -21,7 +21,6 @@ const main = () => {
 	  }
 	  console.log(data.length)
 	for (var i=0; i<20; i++) {
-		console.log(indices[i])
 		var gunung = data[indices[i]]
         const idx = names.push(gunung['name']+' ('+gunung['elevation']+'m)') - 1
         gunung.eruptions.forEach((eruption) => {

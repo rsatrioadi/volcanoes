@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+<style>
+		html * {
+			font-family: 'Fira Sans' !important;
+				text-align:center;
+		}
+
+.bar {
+  fill: grey;
+}
+
+.bar:hover {
+  fill: blue;
+}
+
+.barf {
+  fill: orange;
+}
+
+.barf:hover {
+  fill: blue;
+}
+
+.axis--x path {
+  display: none;
+}
+		div.tooltip {	
+		    position: absolute;			
+		    text-align: left;			
+		    width: 200px;					
+		    height: 48px;					
+		    padding: 2px;				
+		    font: 12px sans-serif;		
+		    background: black;
+			color: white;	
+		    border: 0px;			
+		    pointer-events: none;			
+		}
+
+</style>
+	<title>Volcanoes: elevation vs. eruption frequency</title>
+</head>
+<body>
+	<h1>🌋Volcanoes!</h1>
+	<p>Elevation vs. eruption frequency.</p>
+<svg width="1200" height="500"></svg>
+<script src="d3.min.js"></script>
+<script>
+
+var svg = d3.select("svg"),
+    margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = +svg.attr("width") - margin.left - margin.right,
+    height = +svg.attr("height") - margin.top - margin.bottom;
+
+var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
+    y = d3.scaleLinear().rangeRound([height, 0]);
+
+var g = svg.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  
+d3.json("data.json",  function(error, data) {
+  if (error) throw error;
+  
+  console.log('yuhu');
+
+  x.domain(data.map(function(d) { return d.name; }));
+  y.domain([0, d3.max(data, function(d) { return d.elevation; })]);
+
+  /*g.append("g")
+      .attr("class", "axis axis--x")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));*/
+
+  /*g.append("g")
+      .attr("class", "axis axis--y")
+      .call(d3.axisLeft(y).ticks(10, "%"))
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", "0.71em")
+      .attr("text-anchor", "end")
+      .text("Frequency");*/
+
+var div = d3.select("body").append("div")	
+    .attr("class", "tooltip")				
+    .style("opacity", 0);
+
+  g.selectAll(".bar")
+    .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.name); })
+      .attr("y", function(d) { return y(d.elevation); })
+      .attr("width", x.bandwidth())
+      .attr("height", function(d) { return height - y(d.elevation); })
+					.on("mouseover", function(d) {		
+						div.transition()		
+						    .duration(200)		
+						    .style("opacity", .9);		
+						div.html(d.name+'<br/>elevation: '+d.elevation+'m<br/>eruptions since 1800AD: '+d.eruptionCount)	
+						    .style("left", (d3.event.pageX) + "px")		
+						    .style("top", (d3.event.pageY - 14) + "px");	
+					})					
+					.on("mouseout", function(d) {		
+						div.transition()		
+						    .duration(500)		
+						    .style("opacity", 0);	
+					});
+
+				    y.domain([0, d3.max(data, function(d) { return d.eruptionCount; })]);
+  g.selectAll(".barf")
+    .data(data)
+    .enter().append("rect")
+      .attr("class", "barf")
+      .attr("x", function(d) { return x(d.name); })
+      .attr("y", function(d) { return y(d.eruptionCount); })
+      .attr("width", x.bandwidth())
+      .attr("height", function(d) { return height - y(d.eruptionCount); })
+					.on("mouseover", function(d) {		
+						div.transition()		
+						    .duration(200)		
+						    .style("opacity", .9);		
+						div.html(d.name+'<br/>elevation: '+d.elevation+'m<br/>eruptions since 1800AD: '+d.eruptionCount)	
+						    .style("left", (d3.event.pageX) + "px")		
+						    .style("top", (d3.event.pageY - 14) + "px");	
+					})					
+					.on("mouseout", function(d) {		
+						div.transition()		
+						    .duration(500)		
+						    .style("opacity", 0);	
+					});
+});
+
+</script>
+</body>
