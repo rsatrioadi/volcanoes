@@ -3,6 +3,12 @@ html * {
 	text-align:center;
 }
 
+#root {
+	margin-left: 1in;
+	margin-right: 1in;
+	margin-top: .5in;
+}
+
 #root:after {
 	visibility: hidden;
 	display: block;

@@ -5,6 +5,7 @@ const Config = {
 	veiMaxWidth: 400,
 	popMinCount: 1,
 	popMaxCount: 20,
+	hutSize: 200000,
 }
 
 const main = () => {
@@ -70,7 +71,8 @@ const scaleNumbers = (source) => {
 			...letusan,
 			ele: Config.eleMinHeight + rangeEleResult * (ele - eleMin) / rangeEleSource,
 			vei: Config.veiMinWidth + rangeVeiResult * (vei - veiMin) / rangeVeiSource,
-			pop: Config.popMinCount + rangePopResult * (pop - popMin) / rangePopSource,
+			//pop: Config.popMinCount + rangePopResult * (pop - popMin) / rangePopSource,
+			pop: Math.floor(pop / Config.hutSize),
 		})
 	})
 

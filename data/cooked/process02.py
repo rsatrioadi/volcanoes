@@ -41,4 +41,5 @@ with open('gvp_volcanoes.csv') as vfile:
                     #    largest['START'], largest['VEI'], latest['START'], latest['VEI'], ec \
                     #]]))
     
+vl.sort(key=lambda v: int(v['eruptionCount']), reverse=True)
 print(json.dumps(vl, indent=2))

@@ -11,8 +11,10 @@ const main = () => {
       const veis = []
 
       // data to chartjs format
-      data.forEach((gunung) => {
-        const idx = names.push(gunung['name']) - 1
+      //data.forEach((gunung) => {
+	for (var ii = 14; ii >= 0; ii--) {
+		var gunung = data[ii]
+        const idx = names.push(gunung['name']+' ('+gunung['elevation']+'m)') - 1
         gunung.eruptions.forEach((eruption) => {
           const start = parseInt(eruption['START'], 10)
           const vei = parseInt(eruption['VEI'], 10)
@@ -22,7 +24,7 @@ const main = () => {
           })
           veis.push(vei)
         })
-      })
+      }//)
 
       // get vei max min
       let veiMin = Number.MAX_SAFE_INTEGER, veiMax = Number.MIN_SAFE_INTEGER
@@ -36,7 +38,7 @@ const main = () => {
       // calculate hue based on vei range
       points.forEach((point, idx) => {
         const hue = 120 - 120 * (veis[idx] - veiMin) / (veiMax - veiMin)
-        point.color = `hsl(${hue}, 100%, 50%)`
+        point.color = `hsl(${hue}, 80%, 50%)`
       })
 
       visualizeData(points, names, veis)
