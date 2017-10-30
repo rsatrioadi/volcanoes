@@ -4,9 +4,10 @@ html * {
 }
 
 #root {
-	margin-left: 1in;
-	margin-right: 1in;
-	margin-top: .5in;
+	margin-top: 200px;
+	display:flex;
+	align-items: flex-end;
+	justify-content: flex-start;
 }
 
 #root:after {
@@ -18,9 +19,44 @@ html * {
 	height: 0;
 }
 
-.letusan {
+.header {
+	background-color: white;
+	position: fixed;
+    top: 0;
+    width: 100%;
+    padding-bottom: 15px;
+    z-index: 1;
+}
+
+.footer {
+	position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;    
+    text-align: center;
+}
+
+.footer .right {
+	max-height: 50px;
+	float: right;
+}
+
+.footer .left {
+	max-height: 50px;
 	float: left;
+    -moz-transform: scale(-1, -1);
+    -o-transform: scale(-1, -1);
+    -webkit-transform: scale(-1, -1);
+    transform: scale(-1, -1);
+}
+
+.letusan {
+	display: inline-block;
+    text-align: center;
+    padding: 14px;
 	margin: 0 50px 50px 0;
+	position:relative;
+	margin-right: 20px;
 }
 
 .letusan .label {
@@ -44,8 +80,13 @@ html * {
 }
 
 .letusan .pop {
+	width: 100%;
 	text-align: center;
 	margin-top: 8px;
+	position:absolute;
+	top: 100%;
+	left:50%;
+	transform: translateX(-50%);
 }
 .letusan .pop .house {
 	display: inline-block;

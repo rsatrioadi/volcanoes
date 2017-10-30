@@ -21,6 +21,8 @@ const main = () => {
 				<p>error, see console log</p>
 			`)
 		})
+
+	calcHeight()
 }
 
 const fetchData = () => {
@@ -145,5 +147,11 @@ const drawLetusan = (data) => {
 		$('#root').append($letusan)
 	}
 }
+
+$( document ).ready(function() {
+    console.log( "ready!" );
+	hgt = Math.max.apply(Math, $('#pop').map(function(){ return $(this).height(); }).get());
+	$('#letusan').height(hgt)
+});
 
 main()
