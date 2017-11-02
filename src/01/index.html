@@ -19,15 +19,14 @@
 		}
 		.circle {
 			stroke: red;
-			stroke-width: 1px;
-			fill: orange;
-			fill-opacity: 0.5;
+			stroke-width: 0px;
+			fill-opacity: 0.8;
 		}
 		div.tooltip {	
 		    position: absolute;			
 		    text-align: left;			
-		    width: 80px;					
-		    height: 28px;					
+		    width: 132px;					
+		    height: 32px;					
 		    padding: 2px;				
 		    font: 12px sans-serif;		
 		    background: black;
@@ -76,9 +75,13 @@
 		    .attr("class", "tooltip")				
 		    .style("opacity", 0);
 		
+			function year(y) {
+				if (y>0) return y; else return (-y)+" BC";
+			}
+		
 		d3.json("01.json", function(err, volc) {
-			var vei = [1,2,3,5,8,13,21,34,55];
-			var color = [];
+			var vei = [2,3,5,8,12,17,23,30,38];
+		var color = ['#15b01a','#ffff00','#ffd820','#ffae3d','#f9844d','#e95d51','#d13747','#b1142e','#8b0000'];
 			
 			volc.sort(function(x,y) {
 				return d3.descending(x.largestVei,y.largestVei);
@@ -91,11 +94,12 @@
 					.attr("cx", function(d) {return projection([d.longitude,d.latitude])[0];})
 					.attr("cy", function(d) {return projection([d.longitude,d.latitude])[1];})
 					.attr("r", function (d) {return vei[d.largestVei];})
+					.style("fill", function (d) {return color[d.largestVei];})
 					.on("mouseover", function(d) {		
 						div.transition()		
 						    .duration(200)		
 						    .style("opacity", .9);		
-						div.html(d.name)	
+						div.html(d.name + "<br/>VEI: " + d.largestVei + " (Year " + year(d.largestStart) + ")")	
 						    .style("left", (d3.event.pageX) + "px")		
 						    .style("top", (d3.event.pageY - 14) + "px");	
 					})					

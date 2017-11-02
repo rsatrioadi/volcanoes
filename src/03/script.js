@@ -35,18 +35,21 @@ const main = () => {
       }//)
 
       // get vei max min
-      let veiMin = Number.MAX_SAFE_INTEGER, veiMax = Number.MIN_SAFE_INTEGER
+      /*let veiMin = Number.MAX_SAFE_INTEGER, veiMax = Number.MIN_SAFE_INTEGER
       veis.forEach((vei) => {
         if (vei < veiMin)
           veiMin = vei
         if (vei > veiMax)
           veiMax = vei
-      })
+      })*/
+	  veiMin=0;veiMax=7;
 
+		var color = ['#15b01a','#ffff00','#ffd820','#ffae3d','#f9844d','#e95d51','#d13747','#b1142e','#8b0000'];
       // calculate hue based on vei range
       points.forEach((point, idx) => {
-        const hue = 120 - 120 * (veis[idx] - veiMin) / (veiMax - veiMin)
-        point.color = `hsl(${hue}, 80%, 50%)`
+        //const hue = 120 - 120 * (veis[idx] - veiMin) / (veiMax - veiMin)
+        //point.color = `hsl(${hue}, 80%, 50%)`
+		  point.color = color[veis[idx]]
       })
 
       visualizeData(points, names, veis)

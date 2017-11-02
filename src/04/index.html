@@ -8,19 +8,19 @@
 		}
 
 .bar {
-  fill: grey;
+  fill: #483e37;
 }
 
 .bar:hover {
-  fill: blue;
+  fill: #b1142e;
 }
 
 .barf {
-  fill: orange;
+  fill: #ffae3d;
 }
 
 .barf:hover {
-  fill: blue;
+  fill: #b1142e;
 }
 
 .axis--x path {
@@ -67,8 +67,6 @@ var g = svg.append("g")
 d3.json("data.json",  function(error, data) {
   if (error) throw error;
   
-  console.log('yuhu');
-
   x.domain(data.map(function(d) { return d.name; }));
   y.domain([0, d3.max(data, function(d) { return d.elevation; })]);
 
