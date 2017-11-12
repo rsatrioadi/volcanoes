@@ -20,11 +20,11 @@ with open('gvp_volcanoes.csv') as vfile:
                 largest = my_e[-1]
                 ee = []
                 for e in my_e:
-                    if int(e['START']) > 1800:
-                        ec += 1
-                        if e['VEI'] >= largest['VEI']:
-                            largest = e
-                        ee += [e]    
+                    #if int(e['START']) > 0:
+                    ec += 1
+                    if e['VEI'] >= largest['VEI']:
+                        largest = e
+                    ee += [e]    
                 if ec > 0:
                     vo = { \
                             'name':v['NAME'], 'country':v['COUNTRY'], \
@@ -41,5 +41,5 @@ with open('gvp_volcanoes.csv') as vfile:
                     #    largest['START'], largest['VEI'], latest['START'], latest['VEI'], ec \
                     #]]))
     
-vl.sort(key=lambda v: int(v['elevation']), reverse=True)
+vl.sort(key=lambda v: int(v['largestVei']), reverse=True)
 print(json.dumps(vl, indent=2))

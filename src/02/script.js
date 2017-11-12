@@ -1,8 +1,8 @@
 const Config = {
-	eleMinHeight: 30,
-	eleMaxHeight: 300,
-	veiMinWidth: 30,
-	veiMaxWidth: 400,
+	eleMinHeight: 32,
+	eleMaxHeight: 240,
+	veiMinWidth: 32,
+	veiMaxWidth: 360,
 	popMinCount: 1,
 	popMaxCount: 20,
 	hutSize: 200000,

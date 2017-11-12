@@ -2,8 +2,9 @@
 <head>
 	<meta charset="utf-8">
 	<title>Volcanoes: largest VEI's</title>
-	<script src="d3.min.js"></script>
+
 	<!--link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet"-->
+    <link rel="stylesheet" href="leaflet.css"/>
 	<style>
 		html * {
 			font-family: 'Fira Sans' !important;
@@ -34,6 +35,47 @@
 		    border: 0px;			
 		    pointer-events: none;			
 		}
+        body {
+            padding: 0;
+            margin: 0;
+        }
+        #svg-filter {
+            width: 80%;
+        }
+    .ticks {
+      font: 10px sans-serif;
+    }
+    
+    .track,
+    .track-inset,
+    .track-overlay {
+      stroke-linecap: round;
+    }
+    
+    .track {
+      stroke: #000;
+      stroke-opacity: 0.3;
+      stroke-width: 10px;
+    }
+    
+    .track-inset {
+      stroke: #ddd;
+      stroke-width: 8px;
+    }
+    
+    .track-overlay {
+      pointer-events: stroke;
+      stroke-width: 50px;
+      stroke: transparent;
+      cursor: crosshair;
+    }
+    
+    .handle {
+      fill: #fff;
+      stroke: #000;
+      stroke-opacity: 0.5;
+      stroke-width: 1.25px;
+    }  
 	</style>
 </head>
 <body>
@@ -43,9 +85,131 @@
 			<a href="../04/index.html">Elevation vs. eruption frequency</a> 🌋 
 			<a href="../03/index.html">Eruptions timeline</a> 🌋 
 			<a href="../02/index.html">Largest recent VEI, population within 10km, and elevation</a>
-	<h2>Largest VEI of Holocene eruptions.</h2><p>(Holocene: 11700 years ago or more recent.)</p>
+	<h2>Largest VEI of Holocene eruptions.</h2>
+		<p>        <label for="label-years">
+               Showing largest eruptions from year 
+               <span id="years-range">...</span>
+        </label></p>
+    <script src="leaflet.js"></script>
+    <script src="d3.min.js"></script>
+    <script src="crossfilter.min.js"></script>
+        <svg id="svg-filter"></svg>
 	<script>
-		var width = 950;
+	    // layout
+	    var svgFilter = d3.select("#svg-filter");
+  
+	    // calculate first and last year of entries
+	    var yearFirst = 0;
+	    var yearLast = 2020;
+	    console.log(yearFirst, yearLast);
+  
+	    // slider
+	    var sliderWidth = 960;
+	    var xYearFirst = d3.scaleLinear()
+	        .domain([yearFirst, yearLast])
+	        .range([0, sliderWidth])
+	        .clamp(true);
+	    var xYearLast = d3.scaleLinear()
+	        .domain([yearFirst, yearLast])
+	        .range([0, sliderWidth])
+	        .clamp(true);
+  
+	    var sliderYearFirst = svgFilter.append("g")
+	        .attr("class", "slider")
+	        .attr("transform", "translate(" + 30 + "," + 100 / 2 + ")");
+	    var sliderYearLast = svgFilter.append("g")
+	        .attr("class", "slider")
+	        .attr("transform", "translate(" + 30 + "," + 200 / 2 + ")");
+  
+	    sliderYearFirst.append("line")
+	        .attr("class", "track")
+	        .attr("x1", xYearFirst.range()[0])
+	        .attr("x2", xYearFirst.range()[1])
+	      .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+	        .attr("class", "track-inset")
+	      .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+	        .attr("class", "track-overlay")
+	        .call(d3.drag()
+	            .on("start.interrupt", function() { sliderYearFirst.interrupt(); })
+	            .on("start drag", function() { hue1(xYearFirst.invert(d3.event.x)); }));
+	    sliderYearLast.append("line")
+	        .attr("class", "track")
+	        .attr("x1", xYearLast.range()[0])
+	        .attr("x2", xYearLast.range()[1])
+	      .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+	        .attr("class", "track-inset")
+	      .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+	        .attr("class", "track-overlay")
+	        .call(d3.drag()
+	            .on("start.interrupt", function() { sliderYearLast.interrupt(); })
+	            .on("start drag", function() { hue2(xYearLast.invert(d3.event.x)); }));
+  
+	    sliderYearFirst.insert("g", ".track-overlay")
+	        .attr("class", "ticks")
+	        .attr("transform", "translate(0," + 18 + ")")
+	      .selectAll("text")
+	      .data(xYearFirst.ticks(10))
+	      .enter().append("text")
+	        .attr("x", xYearFirst)
+	        .attr("text-anchor", "middle")
+	        .text(function(d) { return d; });
+	    var handle1 = sliderYearFirst.insert("circle", ".track-overlay")
+	        .attr("class", "handle")
+	        .attr("cx",0)
+	        .attr("r", 9);
+  
+	    sliderYearLast.insert("g", ".track-overlay")
+	        .attr("class", "ticks")
+	        .attr("transform", "translate(0," + 18 + ")")
+	      .selectAll("text")
+	      .data(xYearLast.ticks(10))
+	      .enter().append("text")
+	        .attr("x", xYearLast)
+	        .attr("text-anchor", "middle")
+	        .text(function(d) { return d; });
+	    var handle2 = sliderYearLast.insert("circle", ".track-overlay")
+	        .attr("class", "handle")
+	        .attr("cx",0)
+	        .attr("r", 9);
+
+	    // move second slider in the begin to demonstrate interactive possibility      
+	    sliderYearLast.transition() 
+	        .duration(1000)
+	        .tween("hue", function() {
+	          var i = d3.interpolate(0, 960);
+	          return function(t) { hue2(xYearFirst.invert(i(t))); };
+	        }); 
+  
+	    function hue1(h) {
+	      if (handle2.attr("cx") < xYearFirst(h)) {
+	        handle1.attr("cx", handle2.attr("cx"));
+	      } else {
+	        handle1.attr("cx", xYearFirst(h));
+	      }
+	      updateFilterText();
+	      //console.log("hue1", "cx: ",xYearFirst(h),", year:",h);
+	    }
+	    function hue2(h) {
+	      if (handle1.attr("cx") > xYearFirst(h)) {
+	        handle2.attr("cx", handle1.attr("cx"));
+	      } else {
+	        handle2.attr("cx", xYearFirst(h));
+	      } 
+	      updateFilterText();
+	      //console.log("hue2", "cx: ",xYearFirst(h),", year:",h);
+	    }
+  
+	    // adding text to svgFilter 
+	    function updateFilterText() {
+			var yearFrom = parseInt(xYearFirst.invert(handle1.attr("cx")), 10);
+		    var yearUntil = parseInt(xYearFirst.invert(handle2.attr("cx")), 10);
+		    d3.select("#years-range").text(year(yearFrom)+" to "+year(yearUntil));
+		    showEruption(yearFrom, yearUntil);
+	    }
+  
+	  
+	  
+		var width = 960;
 		var height = 460;
 
 		var svg = d3.select("body")
@@ -54,14 +218,14 @@
 			.attr("height",height);
 
 		var projection = d3.geoEquirectangular()
-			.center([0, 20])
+			.center([0, 0])
 			//.scale(width / 2 / Math.PI)
 			.scale(150)
 			.rotate([-100,0]);
 
 		var path = d3.geoPath()
 			.projection(projection);
-		
+			
 		var l1 = svg.append('g');
 		var l2 = svg.append('g');
 
@@ -70,61 +234,72 @@
 			l1.append("path")
 				.attr("d", path(geojson))
 		});
-		
+
 		var div = d3.select("body").append("div")	
 		    .attr("class", "tooltip")				
 		    .style("opacity", 0);
 		
-			function year(y) {
-				if (y>0) return y; else return (-y)+" BC";
-			}
+		function year(y) {
+			if (y>0) return y; else return (-y)+" BC";
+		}
 		
-		d3.json("01.json", function(err, volc) {
-			var vei = [2,3,5,8,12,17,23,30,38];
-		var color = ['#15b01a','#ffff00','#ffd820','#ffae3d','#f9844d','#e95d51','#d13747','#b1142e','#8b0000'];
+		
+		function showEruption(yearFrom, yearUntil) {
+		
+			l2.selectAll("circle").remove();
+			d3.json("data.json", function(err, volc) {
+				var vei = [3,5,6,9,12,17,23,30,38];
+				var color = ['#15b01a','#ffff00','#ffd820','#ffae3d',
+						'#f9844d','#e95d51','#d13747','#b1142e','#8b0000'];
 			
-			volc.sort(function(x,y) {
-				return d3.descending(x.largestVei,y.largestVei);
-			});
-			
-			l2.selectAll("circle")
-				.data(volc)
-				.enter().append("circle")
-					.attr("class", "circle")
-					.attr("cx", function(d) {return projection([d.longitude,d.latitude])[0];})
-					.attr("cy", function(d) {return projection([d.longitude,d.latitude])[1];})
-					.attr("r", function (d) {return vei[d.largestVei];})
-					.style("fill", function (d) {return color[d.largestVei];})
-					.on("mouseover", function(d) {		
-						div.transition()		
-						    .duration(200)		
-						    .style("opacity", .9);		
-						div.html(d.name + "<br/>VEI: " + d.largestVei + " (Year " + year(d.largestStart) + ")")	
-						    .style("left", (d3.event.pageX) + "px")		
-						    .style("top", (d3.event.pageY - 14) + "px");	
-					})					
-					.on("mouseout", function(d) {		
-						div.transition()		
-						    .duration(500)		
-						    .style("opacity", 0);	
+				var vf = volc.filter(function(x) { 
+							var rangedCount = 0;
+							x.eruptions.forEach((e)=>{
+								if (e.START >= yearFrom && e.START <= yearUntil) {
+									rangedCount++;
+								}
+							});
+							return rangedCount > 0;
+						});
+						//console.log(v);
+						
+				function rangedLargest(x) {
+					var largest = {"VEI":0};
+					x.eruptions.forEach((e)=>{
+						if (e.START >= yearFrom && e.START <= yearUntil && e.VEI >= largest.VEI) {
+							largest = e;
+						}
 					});
-			/*
-			var circumference = 6371000 * Math.PI * 2;
-					
-			var angle1 = 1000000 / circumference * 360;
-			var missile1 = d3.geoCircle().center([125.6720717,39.0292506]).radius(angle1);
-
-			svg.append("path")
-				.attr("d", path(missile1()))
-				.attr("class","circle")
-
-			var angle2 = 3500000 / circumference * 360;
-			var missile2 = d3.geoCircle().center([125.6720717,39.0292506]).radius(angle2);
-
-			svg.append("path")
-				.attr("d", path(missile2()))
-				.attr("class","circle")*/
-		});
-
+					return largest;
+				}
+						
+			
+				l2.selectAll("circle")
+					.data(vf)
+					.enter().append("circle")
+						.attr("class", "circle")
+						.attr("cx", function(d) {return projection([d.longitude,d.latitude])[0];})
+						.attr("cy", function(d) {return projection([d.longitude,d.latitude])[1];})
+						.attr("r", function (d) {
+							return vei[rangedLargest(d).VEI];
+						})
+						.style("fill", function (d) {
+							return color[rangedLargest(d).VEI];
+						})
+						.on("mouseover", function(d) {		
+							div.transition()		
+							    .duration(200)		
+							    .style("opacity", .9);		
+							div.html(d.name + "<br/>VEI: " + rangedLargest(d).VEI + " (Year " + year(rangedLargest(d).START) + ")")	
+							    .style("left", (d3.event.pageX) + "px")		
+							    .style("top", (d3.event.pageY - 14) + "px");	
+						})					
+						.on("mouseout", function(d) {		
+							div.transition()		
+							    .duration(500)		
+							    .style("opacity", 0);	
+						});
+			});
+		}
 	</script>
 </body>
