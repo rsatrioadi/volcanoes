@@ -99,7 +99,7 @@
 	    var svgFilter = d3.select("#svg-filter");
   
 	    // calculate first and last year of entries
-	    var yearFirst = 0;
+	    var yearFirst = -10000;
 	    var yearLast = 2020;
 	    console.log(yearFirst, yearLast);
   
@@ -257,6 +257,7 @@
 							x.eruptions.forEach((e)=>{
 								if (e.START >= yearFrom && e.START <= yearUntil) {
 									rangedCount++;
+									
 								}
 							});
 							return rangedCount > 0;
