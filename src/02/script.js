@@ -22,6 +22,7 @@ const main = () => {
 			`)
 		})
 
+	calcHeight()
 }
 
 const fetchData = () => {
@@ -152,3 +153,5 @@ $( document ).ready(function() {
 	hgt = Math.max.apply(Math, $('#pop').map(function(){ return $(this).height(); }).get());
 	$('#letusan').height(hgt)
 });
+
+main()
