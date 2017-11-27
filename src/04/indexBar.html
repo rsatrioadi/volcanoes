@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Volcanoes: elevation vs. eruption frequency</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+
+    <!-- Custom CSS -->
+    <link href="../css/stylish-portfolio.css" rel="stylesheet">
+	
+	<!--link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet"-->
+	<style>
+		html {
+			font-family: 'Fira Sans' !important;
+				text-align:center;
+		}
+
+		.bar {
+			fill: #483e37;
+		}	
+
+		.bar:hover {
+			fill: #b1142e;
+		}
+
+		.barf {
+			fill: #ffae3d;
+		}
+
+		.barf:hover {
+			fill: #b1142e;
+		}
+
+		.axis--x path {
+			display: none;
+		}
+		div.tooltip {	
+		    position: absolute;			
+		    text-align: left;			
+		    width: 200px;					
+		    height: 48px;					
+		    padding: 2px;				
+		    font: 12px sans-serif;		
+		    background: black;
+			color: white;	
+		    border: 0px;			
+		    pointer-events: none;			
+		}
+	</style>
+	
+  </head>
+
+  <body>
+    <!-- Navigation -->
+    <a id="menu-toggle" class="btn btn-secondary btn-lg toggle">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav id="sidebar-wrapper">
+      <ul class="sidebar-nav">
+        <a id="menu-close" href="#" class="btn btn-light btn-lg pull-right toggle">
+          <i class="fa fa-times"></i>
+        </a>
+        <li class="sidebar-brand">
+          <a class="js-scroll-trigger" href="../index.html">Volcanoes</a>
+        </li>
+        <li>
+          <a class="js-scroll-trigger" href="../index.html">Home</a>
+        </li>
+        <li>
+          <a class="js-scroll-trigger" href="#visualizations">Visualizations</a>
+        </li>
+      </ul>
+    </nav>
+
+	<!-- Header -->
+    <aside class="header1">
+      <div class="container text-center">
+        <h1 style= "color=White;">🌋 Volcanoes!</h1>
+        <h3>Elevation vs. eruption frequency </h3>
+      </div>
+    </aside>
+	<!-- Vis2 -->
+  <br>
+	<label><input type="checkbox"> Sort by eruption frequency</label>
+	<svg width="1200" height="500"></svg>
+	<script src="d3.min.js"></script>
+	<script>
+		var svg = d3.select("svg"),
+    margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = +svg.attr("width") - margin.left - margin.right,
+    height = +svg.attr("height") - margin.top - margin.bottom;
+
+var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
+    y = d3.scaleLinear().rangeRound([height, 0]);
+
+var g = svg.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  
+d3.json("data.json",  function(error, data) {
+  if (error) throw error;
+  
+  x.domain(data.map(function(d) { return d.name; }));
+  y.domain([0, d3.max(data, function(d) { return d.elevation; })]);
+
+  /*g.append("g")
+      .attr("class", "axis axis--x")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));*/
+
+  /*g.append("g")
+      .attr("class", "axis axis--y")
+      .call(d3.axisLeft(y).ticks(10, "%"))
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", "0.71em")
+      .attr("text-anchor", "end")
+      .text("Frequency");*/
+
+var div = d3.select("body").append("div")	
+    .attr("class", "tooltip")				
+    .style("opacity", 0);
+
+  g.selectAll(".bar")
+    .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.name); })
+      .attr("y", function(d) { return y(d.elevation); })
+      .attr("width", x.bandwidth())
+      .attr("height", function(d) { return height - y(d.elevation); })
+					.on("mouseover", function(d) {		
+						div.transition()		
+						    .duration(200)		
+						    .style("opacity", .9);		
+						div.html(d.name+'<br/>elevation: '+d.elevation+'m<br/>eruptions since 1800AD: '+d.eruptionCount)	
+						    .style("left", (d3.event.pageX) + "px")		
+						    .style("top", (d3.event.pageY - 14) + "px");	
+					})					
+					.on("mouseout", function(d) {		
+						div.transition()		
+						    .duration(500)		
+						    .style("opacity", 0);
+				
+	});
+			
+	y.domain([0, height/2]);
+  g.selectAll(".barf")
+    .data(data)
+    .enter().append("rect")
+      .attr("class", "barf")
+      .attr("x", function(d) { return x(d.name); })
+      .attr("y", function(d) { return y(d.eruptionCount); })
+      .attr("width", x.bandwidth())
+      .attr("height", function(d) { return height - y(d.eruptionCount); })
+					.on("mouseover", function(d) {		
+						div.transition()		
+						    .duration(200)		
+						    .style("opacity", .9);		
+						div.html(d.name+'<br/>elevation: '+d.elevation+'m<br/>eruptions since 1800AD: '+d.eruptionCount)	
+						    .style("left", (d3.event.pageX) + "px")		
+						    .style("top", (d3.event.pageY - 14) + "px");	
+					})					
+					.on("mouseout", function(d) {		
+						div.transition()		
+						    .duration(500)		
+						    .style("opacity", 0);	
+					});
+						
+	d3.select("input").on("change", change);
+
+	  // var sortTimeout = setTimeout(function() {
+	  //   d3.select("input").property("checked", true).each(change);
+	  // }, 2000);
+
+	  function change() {
+	    //clearTimeout(sortTimeout);
+
+	    // Copy-on-write since tweens are evaluated after a delay.
+	    var x0 = x.domain(data.sort(this.checked
+	        ? function(a, b) { return b.eruptionCount - a.eruptionCount; }
+	        : function(a, b) { return b.elevation - a.elevation; })
+	        .map(function(d) { return d.name; }))
+	        .copy();
+
+	    svg.selectAll(".bar")
+	        .sort(function(a, b) { return x0(a.name) - x0(b.name); });
+
+	    svg.selectAll(".barf")
+	        .sort(function(a, b) { return x0(a.name) - x0(b.name); });
+
+	    var transition = svg.transition().duration(1),
+	        delay = function(d, i) { return i*3; };
+
+	    transition.selectAll(".bar")
+	        .delay(delay)
+	        .attr("x", function(d) { return x0(d.name); });
+
+	    transition.selectAll(".barf")
+	        .delay(delay)
+	        .attr("x", function(d) { return x0(d.name); });
+
+	  }
+
+});
+	</script>
+  <br>
+    <!-- Visualizations -->
+    <section id="visualizations" class="visualizations text-white">
+      <div class="container">
+        <div class="row text-center">
+          <div class="col-lg-10 mx-auto">
+            <h2>Visualizations</h2>
+            <hr class="small">
+            <div class="row">
+              <div class="col-sm-3">
+                <div class="visualization-item">
+				  <img src="../img/visualisasi1.png" height="100" width="200">
+                  <h4>
+                    <strong>Largest VEI of Holocene eruptions</strong>
+                  </h4>
+                  <p>A map with bubbles representing the largest eruption of mountains in the holocene era</p>
+                  <a href="../01/indexMap.html" class="btn btn-light">Learn More</a>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="visualization-item">
+                  <img src="../img/visualisasi2.png" height="100" width="200">
+                  <h4>
+                    <strong>Elevation vs. eruption frequency</strong>
+                  </h4>
+                  <p>The relationship between elevation and eruption frequency with bar charts</p>
+                  <a href="../04/indexBar.html" class="btn btn-light">Learn More</a>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="visualization-item">
+				  <img src="../img/visualisasi3.png" height="100" width="200">
+                  <h4>
+                    <strong>Eruptions timeline</strong>
+                  </h4>
+                  <p>Multiple timelines showing the frequency of eruptions since 1800 until now</p>
+                  <a href="../03/indexMulTimelines.html" class="btn btn-light">Learn More</a>
+                </div>
+              </div>
+			  <div class="col-sm-3">
+                <div class="visualization-item">
+				  <img src="../img/visualisasi4.png" height="100" width="200">
+                  <h4>
+                    <strong>Largest recent VEI, population, elevation</strong>
+                  </h4>
+                  <p>Glyph chart as representation of comparison between elevation, the largest eruption since 1800 and population within 10 km</p>
+                  <a href="../02/indexGlyph.html" class="btn btn-light">Learn More</a>
+                </div>
+              </div>
+            </div>
+            <!-- /.row (nested) -->
+          </div>
+          <!-- /.col-lg-10 -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container -->
+    </section>
+	
+    <!-- Footer -->
+    <aside class="call-to-action">
+      <div class="container text-center">
+		<h4>
+            <strong>Volcanoes</strong>
+        </h4>
+        <p>Institut Teknologi Bandung
+        <br>
+            
+        <hr class="small">
+        <p class="text-muted">Copyright &copy; Volcanoes 2017</p>
+      </div>
+    </aside>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="../vendor/jquery/jquery.min.js"></script>
+    <script src="../vendor/popper/popper.min.js"></script>
+    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="../js/stylish-portfolio.js"></script>
+
+  </body>
+
+</html>

@@ -1,22 +1,201 @@
-<html>
-	<head>
-	<meta charset="utf-8">
-		<style>
-			html * {
-				font-family: 'Fira Sans' !important;
-				text-align:center;
-			}
-		</style>
-		<title>Volcanoes!</title>
-	</head>
-	<body>
-		<h1>🌋Volcanoes!</h1>
-		<p>A visualization of world's volcanoes</p>
-		<br/>
-			<p><a href="01/index.html">Largest VEI of Holocene eruptions</a></p>
-			<p><a href="04/index.html">Elevation vs. eruption frequency</a></p>
-			<p><a href="03/index.html">Eruptions timeline</a></p>
-			<p><a href="02/index.html">Largest recent VEI, population within 10km, and elevation</a></p>
-		
-	</body>
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Volcanoes - Visualization</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+
+    <!-- Custom CSS -->
+    <link href="css/stylish-portfolio.css" rel="stylesheet">
+
+  </head>
+
+  <body>
+    <!-- Navigation -->
+    <a id="menu-toggle" class="btn btn-secondary btn-lg toggle">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav id="sidebar-wrapper">
+      <ul class="sidebar-nav">
+        <a id="menu-close" href="#" class="btn btn-light btn-lg pull-right toggle">
+          <i class="fa fa-times"></i>
+        </a>
+        <li class="sidebar-brand">
+          <a class="js-scroll-trigger" href="#top">Volcanoes</a>
+        </li>
+        <li>
+          <a class="js-scroll-trigger" href="#top">Home</a>
+        </li>
+        <li>
+          <a class="js-scroll-trigger" href="#about">About</a>
+        </li>
+        <li>
+          <a class="js-scroll-trigger" href="#visualizations">Visualizations</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Header -->
+    <header class="header" id="top">
+      <div class="text-vertical-center">
+        <h1 style="color:White;">Volcanoes</h1>
+        <h3 style="color:White;">The Visualization of Volcanoes of The World</h3>
+        <br>
+        <a href="#about" class="btn btn-dark btn-lg js-scroll-trigger">Find Out More</a>
+      </div>
+    </header>
+
+    <!-- About -->
+    <section id="about" class="about">
+      <div class="container text-center">
+        <h2>Get interesting insights about volcanoes here!</h2>
+        <p class="lead">This theme features some wonderful photography courtesy of
+          <a target="_blank" href="https://www.thesun.co.uk/news/2778721/">THE SUN</a>.</p>
+      </div>
+      <!-- /.container -->
+    </section>
+
+    <!-- Visualizations -->
+    <section id="visualizations" class="visualizations text-white">
+      <div class="container">
+        <div class="row text-center">
+          <div class="col-lg-10 mx-auto">
+            <h2>Visualizations</h2>
+            <hr class="small">
+            <div class="row">
+              <div class="col-sm-3">
+                <div class="visualization-item">
+				          <img src="img/visualisasi1.png" height="100" width="200">
+                  <h4>
+                    <strong>Largest VEI of Holocene eruptions</strong>
+                  </h4>
+                  <p>A map with bubbles representing the largest eruption of mountains in the holocene era</p>
+                  <a href="01/indexMap.html" class="btn btn-light">Learn More</a>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="visualization-item">
+                  <img src="img/visualisasi2.png" height="100" width="200">
+                  <h4>
+                    <strong>Elevation vs. eruption frequency</strong>
+                  </h4>
+                  <p>The relationship between elevation and eruption frequency with bar charts</p>
+                  <a href="04/indexBar.html" class="btn btn-light">Learn More</a>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="visualization-item">
+				          <img src="img/visualisasi3.png" height="100" width="200">
+                  <h4>
+                    <strong>Eruptions timeline</strong>
+                  </h4>
+                  <p>Multiple timelines showing the frequency of eruptions since 1800 until now</p>
+                  <a href="03/indexMulTimelines.html" class="btn btn-light">Learn More</a>
+                </div>
+              </div>
+			        <div class="col-sm-3">
+                <div class="visualization-item">
+				          <img src="img/visualisasi4.png" height="100" width="200">
+                  <h4>
+                    <strong>Largest recent VEI, population, elevation</strong>
+                  </h4>
+                  <p>Glyph chart as representation of comparison between elevation, the largest eruption since 1800 and population within 10 km</p>
+                  <a href="02/indexGlyph.html" class="btn btn-light">Learn More</a>
+                </div>
+              </div>
+            </div>
+            <!-- /.row (nested) -->
+          </div>
+          <!-- /.col-lg-10 -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container -->
+    </section>
+    <!-- /.visualizations -->
+
+    <!-- Callout -->
+    <aside class="callout">
+      <div class="text-vertical-center1">
+        Tools & Libraries We Use
+      </div>
+    </aside>
+
+    <!-- Portfolio -->
+    <section id="portfolio" class="portfolio text-white">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-10 mx-auto text-center">
+            <h2>Our Data Sources</h2>
+            <hr class="small">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="portfolio-item">
+                  <a href="https://www.volcanodiscovery.com/">
+                    <img class="img-portfolio img-fluid" src="img/referensi1.png">
+                  </a>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="portfolio-item">
+                  <a href="http://volcano.oregonstate.edu/">
+                    <img class="img-portfolio img-fluid" src="img/referensi2.png">
+                  </a>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="portfolio-item">
+                  <a href="https://eprints.qut.edu.au/40259/1/c40259.pdf">
+                    <img class="img-portfolio img-fluid" src="img/referensi3.png">
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /.col-lg-10 -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container -->
+    </section>
+
+    <!-- Footer -->
+    <aside class="call-to-action">
+      <div class="container text-center">
+		  <h4>
+        <strong>Volcanoes</strong>
+      </h4>
+      <p>Institut Teknologi Bandung
+      <br>
+            
+        <hr class="small">
+        <p class="text-muted">Copyright &copy; Volcanoes 2017</p>
+      </div>
+    </aside>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/popper/popper.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="js/stylish-portfolio.js"></script>
+
+  </body>
+
 </html>

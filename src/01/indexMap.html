@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Volcanoes - Visualization</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+
+    <!-- Custom CSS -->
+    <link href="../css/stylish-portfolio.css" rel="stylesheet">
+
+	<script src="d3.min.js"></script>
+	
+	<!--link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet"-->
+	<style>
+		html {
+			font-family: 'Fira Sans' !important;
+				text-align:center;
+		}
+		h1 {
+			font-weight:bold !important;
+		}
+		path {
+			stroke: white;
+			stroke-width: 0.5px;
+			fill: lightgrey;
+		}
+		.circle {
+			stroke: red;
+			stroke-width: 0px;
+			fill-opacity: 0.8;
+		}
+		div.tooltip {	
+		    position: absolute;			
+		    text-align: left;			
+		    width: 132px;					
+		    height: 32px;					
+		    padding: 2px;				
+		    font: 12px sans-serif;		
+		    background: black;
+			color: white;	
+		    border: 0px;			
+		    pointer-events: none;			
+		}
+        body {
+            padding: 0;
+            margin: 0;
+        }
+        #svg-filter {
+            width: 80%;
+        }
+    .ticks {
+      font: 10px sans-serif;
+    }
+    
+    .track,
+    .track-inset,
+    .track-overlay {
+      stroke-linecap: round;
+    }
+    
+    .track {
+      stroke: #000;
+      stroke-opacity: 0.3;
+      stroke-width: 10px;
+    }
+    
+    .track-inset {
+      stroke: #ddd;
+      stroke-width: 8px;
+    }
+    
+    .track-overlay {
+      pointer-events: stroke;
+      stroke-width: 50px;
+      stroke: transparent;
+      cursor: crosshair;
+    }
+    
+    .handle {
+      fill: #fff;
+      stroke: #000;
+      stroke-opacity: 0.5;
+      stroke-width: 1.25px;
+    }
+	</style>
+	
+  </head>
+
+  <body>
+    <!-- Navigation -->
+    <a id="menu-toggle" class="btn btn-secondary btn-lg toggle">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav id="sidebar-wrapper">
+      <ul class="sidebar-nav">
+        <a id="menu-close" href="#" class="btn btn-light btn-lg pull-right toggle">
+          <i class="fa fa-times"></i>
+        </a>
+        <li class="sidebar-brand">
+          <a class="js-scroll-trigger" href="../index.html">Volcanoes</a>
+        </li>
+        <li>
+          <a class="js-scroll-trigger" href="../index.html">Home</a>
+        </li>
+        <li>
+          <a class="js-scroll-trigger" href="#visualizations">Visualizations</a>
+        </li>
+      </ul>
+    </nav>
+
+	<!-- Header -->
+    <header class="header1">
+      <div class="container text-center">
+        <h1 style= "color=White;">🌋 Volcanoes!</h1>
+        <h3>Largest VEI of Holocene eruptions </h3>
+      </div>
+    </header>
+	<br><br><p> <label for="label-years">
+        Showing largest eruptions from year 
+        <span id="years-range">...</span>
+    </label></p>
+	<script src="leaflet.js"></script>
+	<script src="d3.min.js"></script>
+	<script src="crossfilter.min.js"></script>
+    <svg id="svg-filter"></svg>
+    <!-- Vis1 -->
+	<script>
+		// layout
+	    var svgFilter = d3.select("#svg-filter");
+  
+	    // calculate first and last year of entries
+	    var yearFirst = -10000;
+	    var yearLast = 2020;
+	    console.log(yearFirst, yearLast);
+  
+	    // slider
+	    var sliderWidth = 960;
+	    var xYearFirst = d3.scaleLinear()
+	        .domain([yearFirst, yearLast])
+	        .range([0, sliderWidth])
+	        .clamp(true);
+	    var xYearLast = d3.scaleLinear()
+	        .domain([yearFirst, yearLast])
+	        .range([0, sliderWidth])
+	        .clamp(true);
+  
+	    var sliderYearFirst = svgFilter.append("g")
+	        .attr("class", "slider")
+	        .attr("transform", "translate(" + 30 + "," + 100 / 2 + ")");
+	    var sliderYearLast = svgFilter.append("g")
+	        .attr("class", "slider")
+	        .attr("transform", "translate(" + 30 + "," + 200 / 2 + ")");
+  
+	    sliderYearFirst.append("line")
+	        .attr("class", "track")
+	        .attr("x1", xYearFirst.range()[0])
+	        .attr("x2", xYearFirst.range()[1])
+	      .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+	        .attr("class", "track-inset")
+	      .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+	        .attr("class", "track-overlay")
+	        .call(d3.drag()
+	            .on("start.interrupt", function() { sliderYearFirst.interrupt(); })
+	            .on("start drag", function() { hue1(xYearFirst.invert(d3.event.x)); }));
+	    sliderYearLast.append("line")
+	        .attr("class", "track")
+	        .attr("x1", xYearLast.range()[0])
+	        .attr("x2", xYearLast.range()[1])
+	      .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+	        .attr("class", "track-inset")
+	      .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+	        .attr("class", "track-overlay")
+	        .call(d3.drag()
+	            .on("start.interrupt", function() { sliderYearLast.interrupt(); })
+	            .on("start drag", function() { hue2(xYearLast.invert(d3.event.x)); }));
+  
+	    sliderYearFirst.insert("g", ".track-overlay")
+	        .attr("class", "ticks")
+	        .attr("transform", "translate(0," + 18 + ")")
+	      .selectAll("text")
+	      .data(xYearFirst.ticks(10))
+	      .enter().append("text")
+	        .attr("x", xYearFirst)
+	        .attr("text-anchor", "middle")
+	        .text(function(d) { return d; });
+	    var handle1 = sliderYearFirst.insert("circle", ".track-overlay")
+	        .attr("class", "handle")
+	        .attr("cx",0)
+	        .attr("r", 9);
+  
+	    sliderYearLast.insert("g", ".track-overlay")
+	        .attr("class", "ticks")
+	        .attr("transform", "translate(0," + 18 + ")")
+	      .selectAll("text")
+	      .data(xYearLast.ticks(10))
+	      .enter().append("text")
+	        .attr("x", xYearLast)
+	        .attr("text-anchor", "middle")
+	        .text(function(d) { return d; });
+	    var handle2 = sliderYearLast.insert("circle", ".track-overlay")
+	        .attr("class", "handle")
+	        .attr("cx",0)
+	        .attr("r", 9);
+
+	    // move second slider in the begin to demonstrate interactive possibility      
+	    sliderYearLast.transition() 
+	        .duration(1000)
+	        .tween("hue", function() {
+	          var i = d3.interpolate(0, 960);
+	          return function(t) { hue2(xYearFirst.invert(i(t))); };
+	        }); 
+  
+	    function hue1(h) {
+	      if (handle2.attr("cx") < xYearFirst(h)) {
+	        handle1.attr("cx", handle2.attr("cx"));
+	      } else {
+	        handle1.attr("cx", xYearFirst(h));
+	      }
+	      updateFilterText();
+	      //console.log("hue1", "cx: ",xYearFirst(h),", year:",h);
+	    }
+	    function hue2(h) {
+	      if (handle1.attr("cx") > xYearFirst(h)) {
+	        handle2.attr("cx", handle1.attr("cx"));
+	      } else {
+	        handle2.attr("cx", xYearFirst(h));
+	      } 
+	      updateFilterText();
+	      //console.log("hue2", "cx: ",xYearFirst(h),", year:",h);
+	    }
+  
+	    // adding text to svgFilter 
+	    function updateFilterText() {
+			var yearFrom = parseInt(xYearFirst.invert(handle1.attr("cx")), 10);
+		    var yearUntil = parseInt(xYearFirst.invert(handle2.attr("cx")), 10);
+		    d3.select("#years-range").text(year(yearFrom)+" to "+year(yearUntil));
+		    showEruption(yearFrom, yearUntil);
+	    }
+  
+	  
+	  
+		var width = 960;
+		var height = 460;
+
+		var svg = d3.select("body")
+			.append("svg")
+			.attr("width",width)
+			.attr("height",height);
+
+		var projection = d3.geoEquirectangular()
+			.center([0, 0])
+			//.scale(width / 2 / Math.PI)
+			.scale(150)
+			.rotate([-100,0]);
+
+		var path = d3.geoPath()
+			.projection(projection);
+			
+		var l1 = svg.append('g');
+		var l2 = svg.append('g');
+
+		// load and display the World
+		d3.json("world-110m.geojson", function(err, geojson) {
+			l1.append("path")
+				.attr("d", path(geojson))
+		});
+
+		var div = d3.select("body").append("div")	
+		    .attr("class", "tooltip")				
+		    .style("opacity", 0);
+		
+		function year(y) {
+			if (y>0) return y; else return (-y)+" BC";
+		}
+		
+		
+		function showEruption(yearFrom, yearUntil) {
+		
+			l2.selectAll("circle").remove();
+			d3.json("data.json", function(err, volc) {
+				var vei = [3,5,6,9,12,17,23,30,38];
+				var color = ['#15b01a','#ffff00','#ffd820','#ffae3d',
+						'#f9844d','#e95d51','#d13747','#b1142e','#8b0000'];
+			
+				var vf = volc.filter(function(x) { 
+							var rangedCount = 0;
+							x.eruptions.forEach((e)=>{
+								if (e.START >= yearFrom && e.START <= yearUntil) {
+									rangedCount++;
+									
+								}
+							});
+							return rangedCount > 0;
+						});
+						//console.log(v);
+						
+				function rangedLargest(x) {
+					var largest = {"VEI":0};
+					x.eruptions.forEach((e)=>{
+						if (e.START >= yearFrom && e.START <= yearUntil && e.VEI >= largest.VEI) {
+							largest = e;
+						}
+					});
+					return largest;
+				}
+						
+			
+				l2.selectAll("circle")
+					.data(vf)
+					.enter().append("circle")
+						.attr("class", "circle")
+						.attr("cx", function(d) {return projection([d.longitude,d.latitude])[0];})
+						.attr("cy", function(d) {return projection([d.longitude,d.latitude])[1];})
+						.attr("r", function (d) {
+							return vei[rangedLargest(d).VEI];
+						})
+						.style("fill", function (d) {
+							return color[rangedLargest(d).VEI];
+						})
+						.on("mouseover", function(d) {		
+							div.transition()		
+							    .duration(200)		
+							    .style("opacity", .9);		
+							div.html(d.name + "<br/>VEI: " + rangedLargest(d).VEI + " (Year " + year(rangedLargest(d).START) + ")")	
+							    .style("left", (d3.event.pageX) + "px")		
+							    .style("top", (d3.event.pageY - 14) + "px");	
+						})					
+						.on("mouseout", function(d) {		
+							div.transition()		
+							    .duration(500)		
+							    .style("opacity", 0);	
+						});
+			});
+		}
+	</script>
+	
+	<br><br>
+    <!-- Visualizations -->
+    <section id="visualizations" class="visualizations text-white">
+      <div class="container">
+        <div class="row text-center">
+          <div class="col-lg-10 mx-auto">
+            <h2>Visualizations</h2>
+            <hr class="small">
+            <div class="row">
+              <div class="col-sm-3">
+                <div class="visualization-item">
+				  <img src="../img/visualisasi1.png" height="100" width="200">
+                  <h4>
+                    <strong>Largest VEI of Holocene eruptions</strong>
+                  </h4>
+                  <p>A map with bubbles representing the largest eruption of mountains in the holocene era</p>
+                  <a href="../01/indexMap.html" class="btn btn-light">Learn More</a>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="visualization-item">
+                  <img src="../img/visualisasi2.png" height="100" width="200">
+                  <h4>
+                    <strong>Elevation vs. eruption frequency</strong>
+                  </h4>
+                  <p>The relationship between elevation and eruption frequency with bar charts</p>
+                  <a href="../04/indexBar.html" class="btn btn-light">Learn More</a>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="visualization-item">
+				  <img src="../img/visualisasi3.png" height="100" width="200">
+                  <h4>
+                    <strong>Eruptions timeline</strong>
+                  </h4>
+                  <p>Multiple timelines showing the frequency of eruptions since 1800 until now</p>
+                  <a href="../03/indexMulTimelines.html" class="btn btn-light">Learn More</a>
+                </div>
+              </div>
+			  <div class="col-sm-3">
+                <div class="visualization-item">
+				  <img src="../img/visualisasi4.png" height="100" width="200">
+                  <h4>
+                    <strong>Largest recent VEI, population, elevation</strong>
+                  </h4>
+                  <p>Glyph chart as representation of comparison between elevation, the largest eruption since 1800 and population within 10 km</p>
+                  <a href="../02/indexGlyph.html" class="btn btn-light">Learn More</a>
+                </div>
+              </div>
+            </div>
+            <!-- /.row (nested) -->
+          </div>
+          <!-- /.col-lg-10 -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container -->
+    </section>
+	
+    <!-- Footer -->
+    <aside class="call-to-action">
+      <div class="container text-center">
+		<h4>
+            <strong>Volcanoes</strong>
+        </h4>
+        <p>Institut Teknologi Bandung
+        <br>
+            
+        <hr class="small">
+        <p class="text-muted">Copyright &copy; Volcanoes 2017</p>
+      </div>
+    </aside>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="../vendor/jquery/jquery.min.js"></script>
+    <script src="../vendor/popper/popper.min.js"></script>
+    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="../js/stylish-portfolio.js"></script>
+
+  </body>
+
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+	
+	<title>Volcanoes: largest VEI's vs. elevation vs. population within 10km</title>
+	
+	<!-- Bootstrap Core CSS -->
+    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+
+    <!-- Custom CSS -->
+    <link href="../css/stylish-portfolio.css" rel="stylesheet">
+	
+	<!--link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet"-->
+	
+
+  <style>
+    html {
+  font-family: 'Fira Sans', sans-serif !important;
+  text-align:center;
+}
+
+#root {
+  margin-top: 100px;
+  display:flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  overflow-x:scroll;
+}
+
+#root:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0;
+}
+
+.footer {
+  position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;    
+    text-align: center;
+}
+
+.footer .right {
+  max-height: 50px;
+  float: right;
+}
+
+.footer .left {
+  max-height: 50px;
+  float: left;
+    -moz-transform: scale(-1, -1);
+    -o-transform: scale(-1, -1);
+    -webkit-transform: scale(-1, -1);
+    transform: scale(-1, -1);
+}
+
+.letusan {
+  display: inline-block;
+    text-align: center;
+    padding: 14px;
+  margin: 0 50px 50px 0;
+  position:relative;
+  margin-right: 20px;
+}
+
+.letusan .label {
+  text-align: center;
+}
+
+.letusan .vei {
+  margin: 0 auto;
+}
+.letusan .vei img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.letusan .ele {
+  margin: 0 auto;
+}
+.letusan .ele img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.letusan .pop {
+  width: 100%;
+  text-align: center;
+  margin-top: 8px;
+  position:absolute;
+  top: 100%;
+  left:50%;
+  transform: translateX(-50%);
+}
+.letusan .pop .house {
+  display: inline-block;
+  width: 32px;
+  height: 20px;
+  margin: 2px;
+}
+.letusan .pop .house img {
+  max-width: 100%;
+  max-height: 100%;
+}
+.house {
+  display: inline-block;
+  width: 150px;
+  height: 20px;
+  margin: 2px;
+}
+.house img {
+  max-width: 100%;
+  max-height: 100%;
+}
+</style>
+
+
+</head>
+<body>
+	<!-- Navigation -->
+    <a id="menu-toggle" class="btn btn-secondary btn-lg toggle">
+      <i class="fa fa-bars"></i>
+    </a>
+    <nav id="sidebar-wrapper">
+      <ul class="sidebar-nav">
+        <a id="menu-close" href="#" class="btn btn-light btn-lg pull-right toggle">
+          <i class="fa fa-times"></i>
+        </a>
+        <li class="sidebar-brand">
+          <a class="js-scroll-trigger" href="../index.html">Volcanoes</a>
+        </li>
+        <li>
+          <a class="js-scroll-trigger" href="../index.html">Home</a>
+        </li>
+        <li>
+          <a class="js-scroll-trigger" href="#visualizations">Visualizations</a>
+        </li>
+      </ul>
+    </nav>
+
+	<!-- Header -->
+    <aside class="header1">
+      <div class="container text-center">
+        <h1 style= "color=White;">🌋 Volcanoes!</h1>
+        <h4>Largest VEI (1800AD or more recent), population within 10km, and elevation, sorted by
+		<select id="DdlSort" onchange="main();">
+		  <option value="POPULATION WITHIN 10KM" selected="selected">population</option>
+		  <option value="ELEVATION">elevation</option>
+		  <option value="LARGEST VEI">VEI</option>
+		</select>
+		</h4>
+      </div>
+    </aside>
+  <br>
+  <br>
+	<!-- Vis3 -->
+	<div class="house">
+		<img src="hut.png"> = 200,000 👱🏻
+	</div>
+
+<div id="root"></div>
+<br>
+<br>
+
+	<!-- Visualizations -->
+    <div id="visualizations" class="visualizations text-white">
+      <div class="container">
+        <div class="row text-center">
+          <div class="col-lg-10 mx-auto">
+            <h2>Visualizations</h2>
+            <hr class="small">
+            <div class="row">
+              <div class="col-sm-3">
+                <div class="visualization-item">
+				  <img src="../img/visualisasi1.png" height="100" width="200">
+                  <h4>
+                    <strong>Largest VEI of Holocene eruptions</strong>
+                  </h4>
+                  <p>A map with bubbles representing the largest eruption of mountains in the holocene era</p>
+                  <a href="../01/indexMap.html" class="btn btn-light">Learn More</a>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="visualization-item">
+                  <img src="../img/visualisasi2.png" height="100" width="200">
+                  <h4>
+                    <strong>Elevation vs. eruption frequency</strong>
+                  </h4>
+                  <p>The relationship between elevation and eruption frequency with bar charts</p>
+                  <a href="../04/indexBar.html" class="btn btn-light">Learn More</a>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="visualization-item">
+				  <img src="../img/visualisasi3.png" height="100" width="200">
+                  <h4>
+                    <strong>Eruptions timeline</strong>
+                  </h4>
+                  <p>Multiple timelines showing the frequency of eruptions since 1800 until now</p>
+                  <a href="../03/indexMulTimelines.html" class="btn btn-light">Learn More</a>
+                </div>
+              </div>
+			  <div class="col-sm-3">
+                <div class="visualization-item">
+				  <img src="../img/visualisasi4.png" height="100" width="200">
+                  <h4>
+                    <strong>Largest recent VEI, population, elevation</strong>
+                  </h4>
+                  <p>Glyph chart as representation of comparison between elevation, the largest eruption since 1800 and population within 10 km</p>
+                  <a href="../02/indexGlyph.html" class="btn btn-light">Learn More</a>
+                </div>
+              </div>
+            </div>
+            <!-- /.row (nested) -->
+          </div>
+          <!-- /.col-lg-10 -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container -->
+    </div>
+	
+    <!-- Footer -->
+    <div class="call-to-action">
+      <div class="container text-center">
+		<h4>
+            <strong>Volcanoes</strong>
+        </h4>
+        <p>Institut Teknologi Bandung
+        <br>
+            
+        <hr class="small">
+        <p class="text-muted">Copyright &copy; Volcanoes 2017</p>
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="../vendor/jquery/jquery.min.js"></script>
+    <script src="../vendor/popper/popper.min.js"></script>
+    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="../js/stylish-portfolio.js"></script>
+<script src="jquery.min.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
